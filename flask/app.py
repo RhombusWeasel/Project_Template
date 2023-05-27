@@ -27,6 +27,9 @@ CORS(app, resources={r"*": {"origins": "*"}})
 
 user_db = Database('users.db')
 user_db.create_table('users')
+user_db.add_column_to_table('users', 'password', 'TEXT')
+user_db.add_column_to_table('users', 'permissions', 'TEXT')
+user_db.add_column_to_table('users', 'last_login', 'DATETIME')
 
 s = URLSafeTimedSerializer(app.secret_key)
 

@@ -11,7 +11,7 @@ fi
 project_name=$1
 work_dir=/home/pete/gpt
 project_dir=${work_dir}/${project_name}
-template_dir=${work_dir}/template
+template_dir=${work_dir}/Project_Template
 env_name=${project_name}_env
 
 cd $work_dir
@@ -19,8 +19,11 @@ npx create-react-app $project_name
 
 cd $project_name
 cp -r ${template_dir}/react/* .
-sed -i "s/PROJECT_NAME/${project_name}/g" package.json
-sed -i "s/ENV_NAME/${env_name}/g" package.json
+# Replace project name in package.json
+# Filthy hack for OSX compatibility.
+sed "s/PROJECT_NAME/${project_name}/g" package.json > new_package.json
+sed "s/ENV_NAME/${env_name}/g" new_package.json > temp.json && mv temp.json new_package.json
+mv new_package.json package.json
 npm install
 
 mkdir backend

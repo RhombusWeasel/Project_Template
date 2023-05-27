@@ -17,7 +17,7 @@ class Database:
         conn = self.get_conn()
         c = conn.cursor()
         c.execute(
-            f'''CREATE TABLE IF NOT EXISTS {table_name} (_id TEXT PRIMARY KEY UNIQUE, last_updated DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+            f'''CREATE TABLE IF NOT EXISTS {table_name} (_id TEXT PRIMARY KEY UNIQUE, last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
         conn.commit()
         conn.close()
         self.log.info(f"Table initialized: {table_name}")
@@ -34,6 +34,11 @@ class Database:
         return any(col[1] == column_name for col in columns)
 
     def add_column_to_table(self, table_name, column_name, data_type):
+        if self.column_exists(table_name, column_name):
+            self.log.info(
+                f"Column {column_name} exists in table {table_name}")
+            return
+        
         conn = self.get_conn()
         c = conn.cursor()
         c.execute(
@@ -57,13 +62,13 @@ class Database:
         if result:
             # Update the specified column for the existing _id and the last_login timestamp
             c.execute(
-                f"UPDATE {table_name} SET {column_name}=?, last_login=CURRENT_TIMESTAMP WHERE _id=?", (
+                f"UPDATE {table_name} SET {column_name}=?, last_update=CURRENT_TIMESTAMP WHERE _id=?", (
                     data, _id)
             )
         else:
             # Insert a new row with the _id and specified column data
             c.execute(
-                f"INSERT INTO {table_name} (_id, {column_name}) VALUES (?, ?)", (_id, data))
+                f"INSERT INTO {table_name} (_id, {column_name}, last_update) VALUES (?, ?, CURRENT_TIMESTAMP)", (_id, data))
 
         conn.commit()
         conn.close()

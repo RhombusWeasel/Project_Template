@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Route, Navigate, Routes } from "react-router-dom";
 import LandingPage from './templates/pages/landing_page/LandingPage';
 import PasswordResetForm from './templates/forms/PasswordResetForm';
+import AdminPage from './templates/pages/admin_page/AdminPage';
 import UserHome from './templates/pages/user_home/UserHome';
 import RegisterForm from './templates/forms/RegisterForm';
-import AdminPage from './templates/pages/admin_page/AdminPage';
 import NavBar from './templates/reusable/navbar/NavBar';
 import LoginForm from './templates/forms/LoginForm';
+import React, { useState, useEffect } from 'react';
 import Logout from "./templates/forms/Logout";
-import React, { useState } from 'react';
+import AdminConsole from "./utils/admin";
 import './App.css';
 
 const App = () => {
@@ -17,6 +18,12 @@ const App = () => {
     'trusted': false,
     'user': true
   });
+
+  useEffect(() => {
+    if (isLoggedIn && permissions.admin) {
+      window.admin = new AdminConsole();
+    }
+  }, [isLoggedIn, permissions]);
 
   return (
     <Router>

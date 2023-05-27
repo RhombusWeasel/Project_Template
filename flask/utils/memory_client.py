@@ -1,7 +1,10 @@
+import configparser
 import requests
 import json
 from utils.logger import Logger
 
+conf = configparser.ConfigParser()
+conf.read('config.ini')
 
 class MemoryClient:
     def __init__(self, base_url, secrets_file='secrets.json'):
@@ -10,8 +13,8 @@ class MemoryClient:
         self.base_url = base_url
         with open(secrets_file, 'r') as f:
             secrets = json.load(f)
-        self.username = secrets['username']
-        self.password = secrets['password']
+        self.username = conf['memory']['username']
+        self.password = conf['memory']['password']
         self.login()
 
     def _request(self, method, endpoint, data=None, jsn=None, retry=True):
@@ -41,7 +44,7 @@ class MemoryClient:
                     return self._request(method, endpoint, data, jsn, retry=False)
                 except Exception as e:
                     #self.logger.error(f'Error making request: {e}')
-        return None
+                    return None
 
 
     def login(self):
@@ -114,3 +117,22 @@ class MemoryClient:
             'new_text': new_text
         }
         return self._request('POST', '/modify_entry', jsn=data)
+
+
+if __name__ == '__main__':
+    client = MemoryClient(conf['memory']['base_url'])
+    client.create_repository('test')
+    client.add_text('test', 'This is a test.')
+    client.add_text('test', 'This is another test.')
+    client.add_text('test', 'This is a third test.')
+    client.add_text('test', 'This is a fourth test.')
+    client.add_text('test', 'This is a fifth test.')
+    client.add_text('test', 'This is a sixth test.')
+
+    client.search('test', 'This is a test.')
+    client.search('test', 'This is another test.')
+
+    client.delete_entry('test', 1)
+
+    client.modify_entry('test', 2, 'This is a modified test.')
+    client.search('test', 'This is a modified test.')
