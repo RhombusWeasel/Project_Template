@@ -9,7 +9,7 @@ fi
 
 
 project_name=$1
-work_dir=/home/pete/gpt
+work_dir=~/gpt
 project_dir=${work_dir}/${project_name}
 template_dir=${work_dir}/Project_Template
 env_name=${project_name}_env
