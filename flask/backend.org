@@ -1,0 +1,63 @@
+* Getting Started
+  The backend of this project is a flask application using a sqLite db for user management.
+  You can add new endpoints by modifying the file /backend/app.py, below is a list of the 
+  default features.
+** config.ini
+   This is a place to store API keys and grant initial admin access.
+   Adding a comma separated list of email addresses to the admin_list or trusted_list will grant those
+   permissions on every server start and they cannot have those permissions revoked in the user DB.
+** Permissions
+   There are three levels of permissions available to give users.
+*** Definitions
+**** User
+     This is the basic level of permission and is given to all created users.  
+     If you revoke this permission a user will be unable to login.
+**** Trusted
+     This is a layer of permissions designed for trusted users with elevated access to site services.
+     There are no uses for this level of permissions in the default project, rather it is included to
+     allow more flexability in your design
+**** Admin
+     This is the top tier permission and an Admin user has default access to all permissions below this level.
+     Site admins will get an additional link in the Navbar to direct them to the admin page where they can modify
+     other users permissions.
+*** Usage
+    As the permissions checks are setup as decorator functions using them is as easy as adding @login_required
+    before any functions that require access from a logged in user
+    #+BEGIN_SRC python
+
+    @app.route('/new_get_endpoint', methods=['GET'])
+    @login_required
+    def new_get_func():
+      return "True", 200
+
+    #+END_SRC
+    The above code will ensure that a user is logged in before calling new_get_func.
+    The same is true for the @trusted_required and @admin_required decorator functions.
+** Endpoints
+   There are a variety of endpoints in the default project to allow for easy user management and monitoring.
+   Below is a description of each of the endpoints grouped by functionality.
+*** Monitoring
+**** /heartbeat GET
+     When called this endpoint will return {'message': 'Alive'} if the host is online and accepting traffic.
+*** User Access
+**** /user_register POST -> {"username": STRING, "password", STRING}
+     Registers a user to the site. Does basic email validation, salts and hashes the passwords.
+**** /user_login POST -> {"username": STRING, "password", STRING}
+     Logs in the user given if their password matches the salted password on record.  There is a built in lockout 
+     mechanism designed to hinder malicious actors that will lock you out for 5 minutes after three failed attempts.
+**** /user_logout GET
+     Logs out the current users session.
+**** /user_permissions GET
+     Returns the permissions of the current user as a JSON object
+     {
+       "user": true,
+       "trusted": false,
+       "admin": false
+     }
+**** /reset_password POST -> {"username": STRING}
+     This will need to be written on a per project basis as setting up and maintaining an email server/choosing one for 
+     you is beyond the scope of this project but the endpoint is setup to the point of generating a hashed token ready 
+     to be sent to the user, currently this token is returned on the call to the endpoint.
+**** /confirm_reset/<token> POST -> {"password": STRING}
+     Email this endpoint with the token string to the user and have your frontend app redirect to the reset password screen.
+     post the new password at the correct endpoint ant the users password will be reset.

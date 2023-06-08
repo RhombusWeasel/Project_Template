@@ -14,12 +14,9 @@ log = logging.getLogger('werkzeug')
 
 conf = configparser.ConfigParser()
 conf.read('config.ini')
-admin_list = conf['admin']['admin_list'].split(
-    ',') if 'admin_list' in conf['admin'] else []
-trusted_list = conf['admin']['trusted_list'].split(
-    ',') if 'trusted_list' in conf['admin'] else []
-white_list = conf['admin']['white_list'].split(
-    ',') if 'white_list' in conf['admin'] else []
+admin_list = conf['admin']['admin_list'].split(',') if 'admin_list' in conf['admin'] else []
+trusted_list = conf['admin']['trusted_list'].split(',') if 'trusted_list' in conf['admin'] else []
+white_list = conf['admin']['white_list'].split(',') if 'white_list' in conf['admin'] else []
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -33,6 +30,9 @@ user_db.add_column_to_table('users', 'last_login', 'DATETIME')
 
 s = URLSafeTimedSerializer(app.secret_key)
 
+def check_permissions(username, perm):
+    perms = json.loads(user_db.load_data('users', username)['permissions'])
+    return perms[perm]
 
 # Decorator to check if the user is logged in, put under your routes that require to be logged in.
 def login_required(f):
@@ -49,7 +49,10 @@ def trusted_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session or session['username'] not in trusted_list:
-            return 'You must be trusted to view this page.', 401
+            if not check_permissions(session['username'], 'trusted'):
+                return 'You must be trusted to view this page.', 401
+        elif 'username' in session and session['username'] in admin_list:
+            return f(*args, **kwargs)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -59,7 +62,8 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session or session['username'] not in admin_list:
-            return 'You must be an admin to view this page.', 401
+            if not check_permissions(session['username'], 'admin'):
+                return 'You must be an admin to view this page.', 401
         return f(*args, **kwargs)
     return decorated_function
 
@@ -135,7 +139,7 @@ def get_permissions():
     return jsonify(json.loads(user_data['permissions'])), 200
 
 
-@app.route('/reset-password', methods=['POST'])
+@app.route('/reset_password', methods=['POST'])
 def reset_password():
     username = request.json['username']
     user_data = user_db.load_data('users', username)
@@ -148,7 +152,7 @@ def reset_password():
     return 'Invalid username'
 
 
-@app.route('/confirm-reset/<token>', methods=['POST'])
+@app.route('/confirm_reset/<token>', methods=['POST'])
 def confirm_reset(token):
     if request.method == 'POST':
         try:
@@ -158,7 +162,7 @@ def confirm_reset(token):
 
         user_data = user_db.load_data('users', username)
         if user_data is not None:
-            new_password = generate_password_hash(request.form['password'])
+            new_password = generate_password_hash(request.json['password'])
             user_db.save_data('users', username, 'password', new_password)
             return redirect(url_for('login'))
         return 'Invalid username'
@@ -176,11 +180,6 @@ def check_user(username):
         if user['_id'] == username:
             return True
     return False
-
-
-def check_permissions(username, perm):
-    perms = json.loads(user_db.load_data('users', username)['permissions'])
-    return perms[perm]
 
 
 @app.route('/grant_perms', methods=['POST'])

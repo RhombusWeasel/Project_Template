@@ -18,6 +18,17 @@ const App = () => {
     'trusted': false,
     'user': true
   });
+  let [context, setContext] = useState({});
+
+  useEffect(() => {
+    if (permissions.user) {
+      window.user = context;
+    }
+  }, [context, permissions.user]);
+
+  function contextWrapper(cont) {
+    setContext(cont);
+  }
 
   useEffect(() => {
     if (isLoggedIn && permissions.admin) {
@@ -37,7 +48,7 @@ const App = () => {
             <Route
               exact path="/"
               element={isLoggedIn
-                ? <UserHome permissions={permissions} />
+                ? <UserHome permissions={permissions} context={context} setContext={contextWrapper} />
                 : <LandingPage />}
             />
             <Route

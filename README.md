@@ -73,11 +73,14 @@ The core project is a React application with a Flask backend. The React applicat
       - `/behaviours` - Contains the behaviours that can be used in the behaviour trees. You can add additional behaviours here.
       - `/composites` - Contains the composite nodes that can be used in the behaviour trees. You can add additional composite nodes here.
       - `/decorators` - Contains the decorator nodes that can be used in the behaviour trees. You can add additional decorator nodes here.
-      - `sub_assemblies` - Contains the sub assemblies that can be used in the behaviour trees. You can add additional sub assemblies here.
+      - `sub_assemblies` - Create sub-assemblies that can be used in the behaviour trees.
 - `/src` - Contains the React application.
   - `/templates` - Contains folders for various page/form templates
     - `/forms` - Contains forms for user registration, login, and profile management. Edit these to suit your application if needed.
     - `/pages` - Contains the main pages for the application. Edit these to suit your application if needed.
+      - `/admin_page` - Contains the Jsx and css for the Admin page.
+      - `/landing_page` - Contains the Jsx and css for the Landing page.
+      - `/user_home` - Contains the Jsx and css for the logged in Home page.
     - `/reuseable` - Contains reuseable components that can be used in multiple pages. Edit these to suit your application if needed.
   - `/utils` - Contains utility functions for the application. This is where you can add additional interfaces to the backend.
     - `admin.jsx` - Contains the interface for the Javascript console. Add additional functions here to expose them to the console.

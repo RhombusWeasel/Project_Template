@@ -1,11 +1,10 @@
 // Users home page, only accessible if logged in.  Edit this page to change the users home page.
 
 import { React } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, Button } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import './user_home.css';
 
-const UserHome = ({permissions}) => {
+const UserHome = ({permissions, context, setContext}) => {
   return (
     <div>
       <Card>

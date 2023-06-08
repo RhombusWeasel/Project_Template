@@ -1,14 +1,20 @@
-[admin]
-admin_list = user@mail.com
+# Uncomment the admin bracket and add a comma separated list of email addresses to setup initial site admin.
+# Users in this list will gain admin prividges after every server start.
+#[admin]
+#admin_list = user@mail.com
 
-[trusted]
-; trusted_list = user@trusted.com
+# Uncomment the trusted bracket and add a comma separated list of email addresses to setup initial site admin.
+# Users in this list will gain admin prividges after every server start.
+#[trusted]
+#trusted_list = user@trusted.com
 
-;[ai]
-;api_key = get-your-own-api-key
-;model   = gpt-3.5-turbo
+# Uncomment the ai bracket and add your own api key and model name to enable the AI features.
+#[ai]
+#api_key = get-your-own-api-key
+#model   = gpt-3.5-turbo
 
-;[memory]
-;base_url = https://memory.therpgserver.co.uk
-;username = user@mail.com
-;password = password
+# Uncomment the memory bracket and add your own username and password to enable the memory features.
+#[memory]
+#base_url = https://memory.therpgserver.co.uk
+#username = user@mail.com
+#password = password
