@@ -11,7 +11,12 @@ const RegisterForm = () => {
     e.preventDefault();
     try {
       const res = await axios.post('/user_register', { username, password }, { headers: { 'Content-Type': 'application/json' } });
-      window.location.href = '/';
+      if(res.status === 200) {
+        window.location.href = '/';
+      } else {
+        console.error(res);
+        alert('Error registering user');
+      }
     } catch (error) {
       console.error(error);
     }
