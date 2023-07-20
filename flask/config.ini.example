@@ -1,8 +1,8 @@
 # Uncomment the admin bracket and add a comma separated list of email addresses to setup initial site admin.
 # Users in this list will gain admin prividges after every server start.
 # This list MUST be active AND have at least one email address in it.
-#[admin]
-#admin_list = user@mail.com
+[admin]
+admin_list = user@mail.com
 
 # Uncomment the trusted bracket and add a comma separated list of email addresses to setup initial site admin.
 # Users in this list will gain admin prividges after every server start.

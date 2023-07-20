@@ -9,7 +9,7 @@ const NavBar = ({ isLoggedIn, permissions }) => {
         ? <div className='nav-header'>
             <Link className='nav-header-link' to="/">Home</Link>
             <Link className='nav-header-link' to="/logout">Logout</Link>
-            { permissions.admin && <Link className='nav-header-link' to="/admin">Admin</Link> }
+            {permissions.admin && <Link className='nav-header-link' to="/admin">Admin</Link>}
           </div>
         : <div className='nav-header'>
             <Link className='nav-header-link' to="/">Home</Link>
